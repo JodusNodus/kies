@@ -1,5 +1,6 @@
 #import <Cocoa/Cocoa.h>
 #import <CommonCrypto/CommonDigest.h>
+#import <Foundation/Foundation.h>
 
 #define NSApp [NSApplication sharedApplication]
 
@@ -7,16 +8,15 @@
 /* User Options                                                               */
 /******************************************************************************/
 
-static CGFloat SDPadding;
+static NSInteger SDPadding;
 static NSString* SDPrompt;
-static NSColor* SDForeground;
-static NSColor* SDForegroundCharMatch;
-static NSColor* SDBackground;
-static NSColor* SDHighlightBackgroundColor;
-static BOOL SDReturnsIndex;
-static NSFont* SDQueryFont;
-static int SDNumRows;
-static int SDPercentWidth;
+static NSColor* SDNormalForeground;
+static NSColor* SDSelectForeground;
+static NSColor* SDNormalBackground;
+static NSColor* SDSelectBackground;
+static NSFont* SDFont;
+static NSInteger SDNumRows;
+static NSInteger SDPercentWidth;
 static BOOL SDReturnStringOnMismatch;
 
 /******************************************************************************/
@@ -88,10 +88,10 @@ static BOOL SDReturnStringOnMismatch;
     [self.displayString removeAttribute:NSForegroundColorAttributeName range:fullRange];
     
     [self.displayString removeAttribute:NSBackgroundColorAttributeName range:fullRange];
-    [self.displayString addAttribute:NSForegroundColorAttributeName value:SDForeground range:fullRange];
+    [self.displayString addAttribute:NSForegroundColorAttributeName value:SDNormalForeground range:fullRange];
     
     [self.indexSet enumerateIndexesUsingBlock:^(NSUInteger i, BOOL *stop) {
-        [self.displayString addAttribute:NSForegroundColorAttributeName value:SDForegroundCharMatch range:NSMakeRange(i, 1)];
+        [self.displayString addAttribute:NSForegroundColorAttributeName value:SDSelectForeground range:NSMakeRange(i, 1)];
     }];
 }
 
@@ -217,7 +217,7 @@ static BOOL SDReturnStringOnMismatch;
     
     [self.window setDelegate: self];
     
-    self.window.backgroundColor = SDBackground;
+    self.window.backgroundColor = SDNormalBackground;
     self.window.hasShadow = NO;
     self.window.titlebarAppearsTransparent = YES;
 }
@@ -225,7 +225,7 @@ static BOOL SDReturnStringOnMismatch;
 - (void) setupQueryField:(NSRect)textRect {
     NSRect promptRect, space;
     
-    CGSize stringSize = [SDPrompt sizeWithAttributes:@{NSFontAttributeName:SDQueryFont}];
+    CGSize stringSize = [SDPrompt sizeWithAttributes:@{NSFontAttributeName:SDFont}];
     CGFloat width = stringSize.width;
     
     
@@ -240,8 +240,8 @@ static BOOL SDReturnStringOnMismatch;
     [self.promptField setBezelStyle: NSTextFieldSquareBezel];
     [self.promptField setBordered: NO];
     [self.promptField setDrawsBackground: NO];
-    [self.promptField setFont: SDQueryFont];
-    [self.promptField setTextColor: SDForeground];
+    [self.promptField setFont: SDFont];
+    [self.promptField setTextColor: SDNormalForeground];
     [self.promptField setStringValue: SDPrompt];
     [self.promptField setEditable: NO];
     [self.promptField setTarget: self];
@@ -254,8 +254,8 @@ static BOOL SDReturnStringOnMismatch;
     [self.queryField setBordered: NO];
     [self.queryField setDrawsBackground: NO];
     [self.queryField setFocusRingType: NSFocusRingTypeNone];
-    [self.queryField setFont: SDQueryFont];
-    [self.queryField setTextColor: SDForeground];
+    [self.queryField setFont: SDFont];
+    [self.queryField setTextColor: SDNormalForeground];
     [self.queryField setEditable: YES];
     [self.queryField setTarget: self];
     [self.queryField setAction: @selector(choose:)];
@@ -266,7 +266,7 @@ static BOOL SDReturnStringOnMismatch;
 - (void) getFrameForWindow:(NSRect*)winRect queryField:(NSRect*)textRect divider:(NSRect*)dividerRect tableView:(NSRect*)listRect {
     *winRect = NSMakeRect(0, 0, 100, 100);
     NSRect contentViewRect = NSInsetRect(*winRect, SDPadding, SDPadding);
-    NSDivideRect(contentViewRect, textRect, listRect, NSHeight([SDQueryFont boundingRectForFont]), NSMaxYEdge);
+    NSDivideRect(contentViewRect, textRect, listRect, NSHeight([SDFont boundingRectForFont]), NSMaxYEdge);
     NSDivideRect(*listRect, dividerRect, listRect, 0, NSMaxYEdge);
     dividerRect->size.height = 1.0;
 }
@@ -275,7 +275,7 @@ static BOOL SDReturnStringOnMismatch;
     NSBox* border = [[NSBox alloc] initWithFrame: dividerRect];
     [border setAutoresizingMask: NSViewWidthSizable | NSViewMinYMargin ];
     [border setBoxType: NSBoxCustom];
-    [border setFillColor: SDForeground];
+    [border setFillColor: SDNormalForeground];
     [border setBorderWidth: 0.0];
     [[self.window contentView] addSubview: border];
 }
@@ -284,8 +284,8 @@ static BOOL SDReturnStringOnMismatch;
     NSTableColumn *col = [[NSTableColumn alloc] initWithIdentifier:@"thing"];
     [col setEditable: NO];
     [col setWidth: 10000];
-    [[col dataCell] setFont: SDQueryFont];
-    [[col dataCell] setTextColor: SDForeground];
+    [[col dataCell] setFont: SDFont];
+    [[col dataCell] setTextColor: SDNormalForeground];
     
     NSTextFieldCell* cell = [col dataCell];
     [cell setLineBreakMode: NSLineBreakByCharWrapping];
@@ -298,7 +298,7 @@ static BOOL SDReturnStringOnMismatch;
     [self.listTableView setAllowsEmptySelection: NO];
     [self.listTableView setAllowsMultipleSelection: NO];
     [self.listTableView setAllowsTypeSelect: NO];
-    [self.listTableView setRowHeight: NSHeight([SDQueryFont boundingRectForFont])];
+    [self.listTableView setRowHeight: NSHeight([SDFont boundingRectForFont])];
     [self.listTableView addTableColumn:col];
     [self.listTableView setTarget: self];
     [self.listTableView setDoubleAction: @selector(chooseByDoubleClicking:)];
@@ -372,7 +372,7 @@ static BOOL SDReturnStringOnMismatch;
 
 - (void) tableView:(NSTableView *)aTableView willDisplayCell:(id)aCell forTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex {
     if ([[aTableView selectedRowIndexes] containsIndex:rowIndex])
-        [aCell setBackgroundColor: SDHighlightBackgroundColor];
+        [aCell setBackgroundColor: SDSelectBackground];
     else
         [aCell setBackgroundColor: [NSColor clearColor]];
     
@@ -434,24 +434,13 @@ static BOOL SDReturnStringOnMismatch;
         exit(1);
     }
     
-    if (SDReturnsIndex) {
-        SDChoice* choice = [self.filteredSortedChoices objectAtIndex: self.choice];
-        NSUInteger realIndex = [self.choices indexOfObject: choice];
-        [self writeOutput: [NSString stringWithFormat:@"%ld", realIndex]];
-    }
-    else {
-        SDChoice* choice = [self.filteredSortedChoices objectAtIndex: self.choice];
-        [self writeOutput: choice.raw];
-    }
+    SDChoice* choice = [self.filteredSortedChoices objectAtIndex: self.choice];
+    [self writeOutput: choice.raw];
     
     exit(0);
 }
 
 - (void) cancel {
-    if (SDReturnsIndex) {
-        [self writeOutput: [NSString stringWithFormat:@"%d", -1]];
-    }
-    
     exit(1);
 }
 
@@ -578,6 +567,18 @@ static void SDShowVersion(const char* name) {
 }
 
 static void usage(const char* name) {
+    printf("usage: %s\n", name);
+    printf(" -p  [run:]     prompt text\n");
+    printf(" -fn [Menlo]    font family name\n");
+    printf(" -fs [14]       font size\n");
+    printf(" -nf [abb2c0]   normal foreground color\n");
+    printf(" -sf [c678dd]   matching text foreground color\n");
+    printf(" -nb [282c34]   normal background color\n");
+    printf(" -sb [282c34]   selected item background color\n");
+    printf(" -l  [282c34]   selected item background color\n");
+    printf(" -l  [10]       number of lines\n");
+    printf(" -pd [0]        padding around the window\n");
+    printf(" -w  [30]       width of choose window\n");
     exit(0);
 }
 
@@ -585,46 +586,50 @@ int main(int argc, const char * argv[]) {
     @autoreleasepool {
         [NSApp setActivationPolicy: NSApplicationActivationPolicyAccessory];
         
-        SDReturnsIndex = NO;
-        const char* hexForeground = "abb2c0";
-        const char* hexForegroundCharMatch = "c678dd";
-        const char* hexBackground = "282c34";
-        const char* hexBackgroundHighlight = "305777";
-        const char* queryFontName = "Menlo";
-        const char* prompt = "run:";
-        CGFloat queryFontSize = 14.0;
-        CGFloat padding = 8.0;
-        SDNumRows = 10;
-        SDReturnStringOnMismatch = NO;
-        SDPercentWidth = -1;
-        
         static SDAppDelegate* delegate;
         delegate = [[SDAppDelegate alloc] init];
         [NSApp setDelegate: delegate];
         
-        int ch;
-        while ((ch = getopt(argc, (char**)argv, "lvf:s:r:p:c:b:n:w:hium")) != -1) {
-            switch (ch) {
-                case 'i': SDReturnsIndex = YES; break;
-                case 'p': prompt = optarg; break;
-                case 'v': SDShowVersion(argv[0]); break;
-                case 'm': SDReturnStringOnMismatch = YES; break;
-                case '?':
-                case 'h':
-                default:
-                    usage(argv[0]);
-            }
-        }
-        argc -= optind;
-        argv += optind;
+        SDReturnStringOnMismatch = NO;
         
-        SDPadding = padding;
-        SDPrompt = [ NSString stringWithUTF8String:prompt ];
-        SDQueryFont = [NSFont fontWithName:[NSString stringWithUTF8String: queryFontName] size:queryFontSize];
-        SDForeground = SDColorFromHex([NSString stringWithUTF8String: hexForeground]);
-        SDForegroundCharMatch = SDColorFromHex([NSString stringWithUTF8String: hexForegroundCharMatch]);
-        SDBackground = SDColorFromHex([NSString stringWithUTF8String: hexBackground]);
-        SDHighlightBackgroundColor = SDColorFromHex([NSString stringWithUTF8String: hexBackgroundHighlight]);
+        NSUserDefaults *args = [NSUserDefaults standardUserDefaults];
+        
+        SDPrompt = [args stringForKey:@"p"];
+        if (SDPrompt == nil)
+            SDPrompt = @"run:";
+        NSString *fontName = [args stringForKey:@"fn"];
+        if (fontName == nil)
+            fontName = @"Menlo";
+        NSInteger fontSize = [args integerForKey:@"fs"];
+        if (fontSize == nil)
+            fontSize = 14;
+        NSString *hexNormalForeground = [args stringForKey:@"nf"];
+        if (hexNormalForeground == nil)
+            hexNormalForeground = @"abb2c0";
+        NSString *hexSelectForeground = [args stringForKey:@"sf"];
+        if (hexSelectForeground == nil)
+            hexSelectForeground = @"c678dd";
+        NSString *hexNormalBackground = [args stringForKey:@"nb"];
+        if (hexNormalBackground == nil)
+            hexNormalBackground = @"282c34";
+        NSString *hexSelectBackground = [args stringForKey:@"sb"];
+        if (hexSelectBackground == nil)
+            hexSelectBackground = @"305777";
+        SDNumRows = [args integerForKey:@"l"];
+        if (SDNumRows == nil)
+            SDNumRows = 10;
+        SDPadding = [args integerForKey:@"pd"];
+        if (SDPadding == nil)
+            SDPadding = 0;
+        SDPercentWidth = [args integerForKey:@"w"];
+        if (SDPercentWidth == nil)
+            SDPercentWidth = 30;
+        
+        SDFont = [NSFont fontWithName:fontName size: fontSize];
+        SDNormalForeground = SDColorFromHex(hexNormalForeground);
+        SDSelectForeground = SDColorFromHex(hexSelectForeground);
+        SDNormalBackground = SDColorFromHex(hexNormalBackground);
+        SDSelectBackground = SDColorFromHex(hexSelectBackground);
         
         NSApplicationMain(argc, argv);
     }
