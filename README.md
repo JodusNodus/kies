@@ -1,9 +1,10 @@
 # Kies
-Universal fuzzy selector for macOs comparable with dmenu
+Universal fuzzy selector for macOs comparable with dmenu.
 
 - Gets list of items from stdin.
 - Fuzzy-searches as you type.
 - Sends result to stdout.
+- Fully customizable colors
 - Run `kies -h` for more info.
 
 ## Install
@@ -22,6 +23,9 @@ $ ls | kies -p "list:"
 ![vim example screenshot](screenshots/vim.png)
 - [Example application launcher](examples/run.sh)
 ![run example screenshot](screenshots/run.png)
+
+## Thanks to
+Sdegutis for creating [choose](https://github.com/sdegutis/choose) which this is forked from.
 
 ## License
 
