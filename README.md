@@ -23,6 +23,8 @@ $ ls | kies -p "list:"
 ![vim example screenshot](screenshots/vim.png)
 - [Example application launcher](examples/run.sh)
 ![run example screenshot](screenshots/run.png)
+- Clipboard (Coming soon)
+- 1Password (Coming soon)
 
 ## Thanks to
 Sdegutis for creating [choose](https://github.com/sdegutis/choose) which this is forked from.
