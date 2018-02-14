@@ -1,9 +1,9 @@
 #import <Cocoa/Cocoa.h>
 #import <CommonCrypto/CommonDigest.h>
 #import <Foundation/Foundation.h>
+#include "head.h"
 
 #define NSApp [NSApplication sharedApplication]
-
 
 static NSInteger SDPadding;
 static NSString* SDPrompt;
@@ -15,50 +15,6 @@ static NSFont* SDFont;
 static NSInteger SDNumRows;
 static NSInteger SDPercentWidth;
 static BOOL SDReturnStringOnMismatch;
-
-// Boilerplate Subclasses
-
-@interface NSApplication (ShutErrorsUp)
-@end
-@implementation NSApplication (ShutErrorsUp)
-- (void) setColorGridView:(id)view {}
-- (void) setView:(id)view {}
-@end
-
-
-@interface SDTableView : NSTableView
-@end
-@implementation SDTableView
-
-- (BOOL) acceptsFirstResponder { return NO; }
-- (BOOL) becomeFirstResponder  { return NO; }
-- (BOOL) canBecomeKeyView      { return NO; }
-
-@end
-
-
-@interface SDMainWindow : NSWindow
-@end
-@implementation SDMainWindow
-
-- (BOOL) canBecomeKeyWindow  { return YES; }
-- (BOOL) canBecomeMainWindow { return YES; }
-
-@end
-
-// Choice
-
-@interface SDChoice : NSObject
-
-@property NSString* normalized;
-@property NSString* raw;
-@property NSMutableIndexSet* indexSet;
-@property NSMutableAttributedString* displayString;
-
-@property BOOL hasAllCharacters;
-@property int score;
-
-@end
 
 @implementation SDChoice
 
@@ -140,18 +96,6 @@ static BOOL SDReturnStringOnMismatch;
 
 @end
 
-// App Delegate
-@interface SDAppDelegate : NSObject <NSApplicationDelegate, NSWindowDelegate, NSTextFieldDelegate, NSTableViewDataSource, NSTableViewDelegate>
-
-@property NSWindow* window;
-@property NSArray* choices;
-@property NSMutableArray* filteredSortedChoices;
-@property SDTableView* listTableView;
-@property NSTextField* promptField;
-@property NSTextField* queryField;
-@property NSInteger choice;
-
-@end
 
 @implementation SDAppDelegate
 
@@ -214,7 +158,6 @@ static BOOL SDReturnStringOnMismatch;
     
     self.promptField = [[NSTextField alloc] initWithFrame: promptRect];
     [self.promptField setAutoresizingMask: NSViewWidthSizable | NSViewMinYMargin ];
-    [self.promptField setDelegate: self];
     [self.promptField setBezelStyle: NSTextFieldSquareBezel];
     [self.promptField setBordered: NO];
     [self.promptField setDrawsBackground: NO];
@@ -222,7 +165,6 @@ static BOOL SDReturnStringOnMismatch;
     [self.promptField setTextColor: SDNormalForeground];
     [self.promptField setStringValue: SDPrompt];
     [self.promptField setEditable: NO];
-    [self.promptField setTarget: self];
     [[self.window contentView] addSubview: self.promptField];
     
     self.queryField = [[NSTextField alloc] initWithFrame: textRect];
