@@ -4,9 +4,6 @@
 
 #define NSApp [NSApplication sharedApplication]
 
-/******************************************************************************/
-/* User Options                                                               */
-/******************************************************************************/
 
 static NSInteger SDPadding;
 static NSString* SDPrompt;
@@ -19,10 +16,7 @@ static NSInteger SDNumRows;
 static NSInteger SDPercentWidth;
 static BOOL SDReturnStringOnMismatch;
 
-/******************************************************************************/
-/* Boilerplate Subclasses                                                     */
-/******************************************************************************/
-
+// Boilerplate Subclasses
 
 @interface NSApplication (ShutErrorsUp)
 @end
@@ -52,9 +46,7 @@ static BOOL SDReturnStringOnMismatch;
 
 @end
 
-/******************************************************************************/
-/* Choice                                                                     */
-/******************************************************************************/
+// Choice
 
 @interface SDChoice : NSObject
 
@@ -97,7 +89,6 @@ static BOOL SDReturnStringOnMismatch;
 
 - (void) analyze:(NSString*)query {
     
-    // TODO: might not need this variable?
     self.hasAllCharacters = NO;
     
     [self.indexSet removeAllIndexes];
@@ -124,11 +115,8 @@ static BOOL SDReturnStringOnMismatch;
     
     self.hasAllCharacters = foundAll;
     
-    // skip the rest when it won't be used by the caller
     if (!self.hasAllCharacters)
         return;
-    
-    // update score
     
     self.score = 0;
     
@@ -152,13 +140,9 @@ static BOOL SDReturnStringOnMismatch;
 
 @end
 
-/******************************************************************************/
-/* App Delegate                                                               */
-/******************************************************************************/
-
+// App Delegate
 @interface SDAppDelegate : NSObject <NSApplicationDelegate, NSWindowDelegate, NSTextFieldDelegate, NSTableViewDataSource, NSTableViewDelegate>
 
-// internal
 @property NSWindow* window;
 @property NSArray* choices;
 @property NSMutableArray* filteredSortedChoices;
@@ -171,10 +155,7 @@ static BOOL SDReturnStringOnMismatch;
 
 @implementation SDAppDelegate
 
-/******************************************************************************/
-/* Starting the app                                                           */
-/******************************************************************************/
-
+// Starting the app
 - (void) applicationDidFinishLaunching:(NSNotification *)notification {
     NSArray* inputItems = [self getInputItems];
     
@@ -204,10 +185,7 @@ static BOOL SDReturnStringOnMismatch;
     [self.window setFrame:NSMakeRect(xPos, yPos, NSWidth([self.window frame]), NSHeight([self.window frame])) display:YES];
 }
 
-/******************************************************************************/
-/* Setting up GUI elements                                                    */
-/******************************************************************************/
-
+// Setting up GUI elements
 - (void) setupWindow:(NSRect)winRect {
     NSUInteger styleMask = NSWindowStyleMaskBorderless;
     self.window = [[SDMainWindow alloc] initWithContentRect: winRect
@@ -348,9 +326,7 @@ static BOOL SDReturnStringOnMismatch;
     [self.window setFrame:winRect display:YES];
 }
 
-/******************************************************************************/
-/* Table view                                                                 */
-/******************************************************************************/
+// Table view
 
 - (void) reflectChoice {
     [self.listTableView selectRowIndexes:[NSIndexSet indexSetWithIndex: self.choice] byExtendingSelection:NO];
@@ -379,28 +355,22 @@ static BOOL SDReturnStringOnMismatch;
     [aCell setDrawsBackground:YES];
 }
 
-/******************************************************************************/
-/* Filtering!                                                                 */
-/******************************************************************************/
-
+// Filtering
 - (void) runQuery:(NSString*)query {
     query = [query lowercaseString];
     
     self.filteredSortedChoices = [self.choices mutableCopy];
     
-    // analyze (cache)
     for (SDChoice* choice in self.filteredSortedChoices)
         [choice analyze: query];
     
     if ([query length] >= 1) {
         
-        // filter out non-matches
         for (SDChoice* choice in [self.filteredSortedChoices copy]) {
             if (!choice.hasAllCharacters)
                 [self.filteredSortedChoices removeObject: choice];
         }
         
-        // sort remainder
         [self.filteredSortedChoices sortUsingComparator:^NSComparisonResult(SDChoice* a, SDChoice* b) {
             if (a.score > b.score) return NSOrderedAscending;
             if (a.score < b.score) return NSOrderedDescending;
@@ -409,22 +379,16 @@ static BOOL SDReturnStringOnMismatch;
         
     }
     
-    // render remainder
     for (SDChoice* choice in self.filteredSortedChoices)
         [choice render];
     
-    // show!
     [self.listTableView reloadData];
     
-    // push choice back to start
     self.choice = 0;
     [self reflectChoice];
 }
 
-/******************************************************************************/
-/* Ending the app                                                             */
-/******************************************************************************/
-
+// Ending the app
 - (void) choose {
     if ([self.filteredSortedChoices count] == 0) {
         if (SDReturnStringOnMismatch) {
@@ -469,10 +433,7 @@ static BOOL SDReturnStringOnMismatch;
     [self choose];
 }
 
-/******************************************************************************/
-/* Search field callbacks                                                     */
-/******************************************************************************/
-
+// Search field callbacks
 - (BOOL)control:(NSControl *)control textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector {
     if (commandSelector == @selector(cancelOperation:)) {
         if ([[self.queryField stringValue] length] > 0) {
@@ -504,7 +465,6 @@ static BOOL SDReturnStringOnMismatch;
             [self cancel];
     }
     
-    //    NSLog(@"[%@]", NSStringFromSelector(commandSelector));
     return NO;
 }
 
@@ -517,10 +477,7 @@ static BOOL SDReturnStringOnMismatch;
     [editor selectAll: sender];
 }
 
-/******************************************************************************/
-/* Helpers                                                                    */
-/******************************************************************************/
-
+// Helpers
 - (void) writeOutput:(NSString*)str {
     NSFileHandle* stdoutHandle = [NSFileHandle fileHandleWithStandardOutput];
     [stdoutHandle writeData: [str dataUsingEncoding:NSUTF8StringEncoding]];
@@ -536,10 +493,7 @@ static NSColor* SDColorFromHex(NSString* hex) {
                                      alpha: 1.0];
 }
 
-/******************************************************************************/
-/* Getting input list                                                         */
-/******************************************************************************/
-
+// Getting input list
 - (NSArray*) getInputItems {
     NSFileHandle* stdinHandle = [NSFileHandle fileHandleWithStandardInput];
     NSData* inputData = [stdinHandle readDataToEndOfFile];
@@ -553,10 +507,7 @@ static NSColor* SDColorFromHex(NSString* hex) {
 
 @end
 
-/******************************************************************************/
-/* Command line interface                                                     */
-/******************************************************************************/
-
+// Command line interface
 static NSString* SDAppVersionString(void) {
     return [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"];
 }

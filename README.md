@@ -4,7 +4,7 @@ Universal fuzzy selector for macOs comparable with dmenu
 - Gets list of items from stdin.
 - Fuzzy-searches as you type.
 - Sends result to stdout.
-- Run choose -h for more info.
+- Run `kies -h` for more info.
 
 ## Install
 

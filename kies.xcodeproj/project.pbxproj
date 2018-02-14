@@ -7,21 +7,37 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		EF3CE22E203361F2000CAD87 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = EF3CE22D203361F2000CAD87 /* AppDelegate.m */; };
-		EF3CE236203361F2000CAD87 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = EF3CE235203361F2000CAD87 /* main.m */; };
+		EFEAA7EF2033942900FB0263 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = EF3CE235203361F2000CAD87 /* main.m */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		EFEAA7E4203393C200FB0263 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		EF3CE229203361F2000CAD87 /* kies.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = kies.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		EF3CE22C203361F2000CAD87 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		EF3CE22D203361F2000CAD87 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		EF3CE234203361F2000CAD87 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		EF3CE235203361F2000CAD87 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		EF3CE237203361F2000CAD87 /* kies.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = kies.entitlements; sourceTree = "<group>"; };
+		EF3CE235203361F2000CAD87 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		EFEAA7E6203393C200FB0263 /* kies-cli */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "kies-cli"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		EF3CE226203361F2000CAD87 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EFEAA7E3203393C200FB0263 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -43,6 +59,7 @@
 			isa = PBXGroup;
 			children = (
 				EF3CE229203361F2000CAD87 /* kies.app */,
+				EFEAA7E6203393C200FB0263 /* kies-cli */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -50,11 +67,8 @@
 		EF3CE22B203361F2000CAD87 /* kies */ = {
 			isa = PBXGroup;
 			children = (
-				EF3CE22C203361F2000CAD87 /* AppDelegate.h */,
-				EF3CE22D203361F2000CAD87 /* AppDelegate.m */,
 				EF3CE234203361F2000CAD87 /* Info.plist */,
 				EF3CE235203361F2000CAD87 /* main.m */,
-				EF3CE237203361F2000CAD87 /* kies.entitlements */,
 			);
 			path = kies;
 			sourceTree = "<group>";
@@ -79,6 +93,23 @@
 			productReference = EF3CE229203361F2000CAD87 /* kies.app */;
 			productType = "com.apple.product-type.application";
 		};
+		EFEAA7E5203393C200FB0263 /* kies-cli */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EFEAA7EC203393C200FB0263 /* Build configuration list for PBXNativeTarget "kies-cli" */;
+			buildPhases = (
+				EFEAA7E2203393C200FB0263 /* Sources */,
+				EFEAA7E3203393C200FB0263 /* Frameworks */,
+				EFEAA7E4203393C200FB0263 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "kies";
+			productName = "kies";
+			productReference = EFEAA7E6203393C200FB0263 /* kies-cli */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -89,6 +120,10 @@
 				ORGANIZATIONNAME = "Thomas Billiet";
 				TargetAttributes = {
 					EF3CE228203361F2000CAD87 = {
+						CreatedOnToolsVersion = 9.2;
+						ProvisioningStyle = Automatic;
+					};
+					EFEAA7E5203393C200FB0263 = {
 						CreatedOnToolsVersion = 9.2;
 						ProvisioningStyle = Automatic;
 					};
@@ -108,6 +143,7 @@
 			projectRoot = "";
 			targets = (
 				EF3CE228203361F2000CAD87 /* kies */,
+				EFEAA7E5203393C200FB0263 /* kies-cli */,
 			);
 		};
 /* End PBXProject section */
@@ -127,8 +163,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EF3CE236203361F2000CAD87 /* main.m in Sources */,
-				EF3CE22E203361F2000CAD87 /* AppDelegate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EFEAA7E2203393C200FB0263 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EFEAA7EF2033942900FB0263 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -241,7 +283,6 @@
 		EF3CE23B203361F2000CAD87 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = kies/kies.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -255,13 +296,34 @@
 		EF3CE23C203361F2000CAD87 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = kies/kies.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = kies/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.thomasbilliet.kies;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		EFEAA7EA203393C200FB0263 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				OTHER_LDFLAGS = (
+					"-sectcreate",
+					__TEXT,
+					__info_plist,
+					"$(SRCROOT)/kies/Info.plist",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		EFEAA7EB203393C200FB0263 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -283,6 +345,15 @@
 			buildConfigurations = (
 				EF3CE23B203361F2000CAD87 /* Debug */,
 				EF3CE23C203361F2000CAD87 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EFEAA7EC203393C200FB0263 /* Build configuration list for PBXNativeTarget "kies-cli" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EFEAA7EA203393C200FB0263 /* Debug */,
+				EFEAA7EB203393C200FB0263 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
