@@ -138,10 +138,12 @@ static BOOL SDReturnStringOnMismatch;
                                                       defer: NO];
     
     [self.window setDelegate: self];
-    
-    self.window.backgroundColor = SDNormalBackground;
-    self.window.hasShadow = NO;
-    self.window.titlebarAppearsTransparent = YES;
+    [self.window setLevel:NSFloatingWindowLevel];
+    [self.window setTitle: @"kies"];
+    [self.window setCanHide: NO];
+    [self.window setBackgroundColor: SDNormalBackground];
+    [self.window setHasShadow: NO];
+    [self.window setTitlebarAppearsTransparent: YES];
 }
 
 - (void) setupQueryField:(NSRect)textRect {
