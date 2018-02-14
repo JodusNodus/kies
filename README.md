@@ -8,15 +8,13 @@ Universal fuzzy selector for macOs comparable with dmenu
 
 ## Install
 
-1. Download the latest release (or build it) and place it in `/Applications`.
-2. Make an alias in your shell
-    - Bash: `alias kies="/Applications/kies.app/Contents/MacOS/kies"`
+1. Download the latest release (or build it)
+2. Place it in your path
 
-
-## Usage
+## Basic Usage
 
 ```bash
-$ ls | kies
+$ ls | kies -p "list:"
 ```
 
 ### Examples

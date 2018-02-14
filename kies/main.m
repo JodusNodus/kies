@@ -512,14 +512,11 @@ static NSString* SDAppVersionString(void) {
     return [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"];
 }
 
-static void SDShowVersion(const char* name) {
-    printf("%s %s\n", name, [SDAppVersionString() UTF8String]);
-    exit(0);
-}
-
-static void usage(const char* name) {
-    printf("usage: %s\n", name);
-    printf(" -p  [run:]     prompt text\n");
+static void usage() {
+    printf("usage: kies v%s\n", [SDAppVersionString() UTF8String]);
+    printf("Give a text list seperated by a newline to stdin and kies provides the result to stdout. \n");
+    printf(" -p             (mandatory) prompt text\n");
+    printf(" -m  [false]    return the result even if it isn't in the list\n");
     printf(" -fn [Menlo]    font family name\n");
     printf(" -fs [14]       font size\n");
     printf(" -nf [abb2c0]   normal foreground color\n");
@@ -530,58 +527,60 @@ static void usage(const char* name) {
     printf(" -l  [10]       number of lines\n");
     printf(" -pd [0]        padding around the window\n");
     printf(" -w  [30]       width of choose window\n");
-    exit(0);
+    exit(1);
 }
 
-int main(int argc, const char * argv[]) {
+void setUserSettings(){
+    NSUserDefaults *args = [NSUserDefaults standardUserDefaults];
+    
+    SDPrompt = [args stringForKey:@"p"];
+    if (SDPrompt == nil){
+        usage();
+        return;
+    }
+    SDReturnStringOnMismatch = [args boolForKey:@"m"];
+    NSString *fontName = [args stringForKey:@"fn"];
+    if (fontName == nil)
+        fontName = @"Menlo";
+    NSInteger fontSize = [args integerForKey:@"fs"];
+    if (fontSize == 0)
+        fontSize = 14;
+    NSString *hexNormalForeground = [args stringForKey:@"nf"];
+    if (hexNormalForeground == nil)
+        hexNormalForeground = @"abb2c0";
+    NSString *hexSelectForeground = [args stringForKey:@"sf"];
+    if (hexSelectForeground == nil)
+        hexSelectForeground = @"c678dd";
+    NSString *hexNormalBackground = [args stringForKey:@"nb"];
+    if (hexNormalBackground == nil)
+        hexNormalBackground = @"282c34";
+    NSString *hexSelectBackground = [args stringForKey:@"sb"];
+    if (hexSelectBackground == nil)
+        hexSelectBackground = @"305777";
+    SDNumRows = [args integerForKey:@"l"];
+    if (SDNumRows == 0)
+        SDNumRows = 10;
+    SDPadding = [args integerForKey:@"pd"];
+    if (SDPadding == 0)
+        SDPadding = 0;
+    SDPercentWidth = [args integerForKey:@"w"];
+    if (SDPercentWidth == 0)
+        SDPercentWidth = 30;
+    
+    SDFont = [NSFont fontWithName:fontName size: fontSize];
+    SDNormalForeground = SDColorFromHex(hexNormalForeground);
+    SDSelectForeground = SDColorFromHex(hexSelectForeground);
+    SDNormalBackground = SDColorFromHex(hexNormalBackground);
+    SDSelectBackground = SDColorFromHex(hexSelectBackground);
+}
+
+int main(int argc, const char *argv[]) {
     @autoreleasepool {
         [NSApp setActivationPolicy: NSApplicationActivationPolicyAccessory];
-        
         static SDAppDelegate* delegate;
         delegate = [[SDAppDelegate alloc] init];
         [NSApp setDelegate: delegate];
-        
-        SDReturnStringOnMismatch = NO;
-        
-        NSUserDefaults *args = [NSUserDefaults standardUserDefaults];
-        
-        SDPrompt = [args stringForKey:@"p"];
-        if (SDPrompt == nil)
-            SDPrompt = @"run:";
-        NSString *fontName = [args stringForKey:@"fn"];
-        if (fontName == nil)
-            fontName = @"Menlo";
-        NSInteger fontSize = [args integerForKey:@"fs"];
-        if (fontSize == nil)
-            fontSize = 14;
-        NSString *hexNormalForeground = [args stringForKey:@"nf"];
-        if (hexNormalForeground == nil)
-            hexNormalForeground = @"abb2c0";
-        NSString *hexSelectForeground = [args stringForKey:@"sf"];
-        if (hexSelectForeground == nil)
-            hexSelectForeground = @"c678dd";
-        NSString *hexNormalBackground = [args stringForKey:@"nb"];
-        if (hexNormalBackground == nil)
-            hexNormalBackground = @"282c34";
-        NSString *hexSelectBackground = [args stringForKey:@"sb"];
-        if (hexSelectBackground == nil)
-            hexSelectBackground = @"305777";
-        SDNumRows = [args integerForKey:@"l"];
-        if (SDNumRows == nil)
-            SDNumRows = 10;
-        SDPadding = [args integerForKey:@"pd"];
-        if (SDPadding == nil)
-            SDPadding = 0;
-        SDPercentWidth = [args integerForKey:@"w"];
-        if (SDPercentWidth == nil)
-            SDPercentWidth = 30;
-        
-        SDFont = [NSFont fontWithName:fontName size: fontSize];
-        SDNormalForeground = SDColorFromHex(hexNormalForeground);
-        SDSelectForeground = SDColorFromHex(hexSelectForeground);
-        SDNormalBackground = SDColorFromHex(hexNormalBackground);
-        SDSelectBackground = SDColorFromHex(hexSelectBackground);
-        
+        setUserSettings();
         NSApplicationMain(argc, argv);
     }
     return 0;
