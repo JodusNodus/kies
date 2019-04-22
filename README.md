@@ -1,4 +1,7 @@
 # Kies
+
+**Will be replaced by https://github.com/JodusNodus/keuze in the future**
+
 Universal fuzzy selector for macOs comparable with dmenu.
 
 - Gets list of items from stdin.
